@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SelfForge - Personal Growth Dashboard</title>
+    <!-- Tailwind CSS & FontAwesome Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans pb-12">
+
+    <!-- Lock Screen (PIN Security) -->
+    <div id="lockScreen" class="fixed inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center p-4">
+        <div class="bg-slate-900 p-8 rounded-2xl shadow-2xl border border-slate-800 text-center max-w-sm w-full">
+            <div class="w-16 h-16 bg-blue-600/20 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2 id="lockTitle" class="text-2xl font-bold mb-2 text-white">Masukkan PIN</h2>
+            <p id="lockDesc" class="text-slate-400 text-sm mb-6">Masukkan 4 digit PIN untuk membuka SelfForge</p>
+            
+            <div class="flex justify-center space-x-3 mb-6" id="pinDots">
+                <div class="w-4 h-4 rounded-full border-2 border-slate-600 dot"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-600 dot"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-600 dot"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-600 dot"></div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 mb-4">
+                <button onclick="pressNum('1')" class="py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold text-xl active:scale-95 transition">1</button>
+                <button onclick="pressNum('2')" class="py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold text-xl active:scale-95 transition">2</button>
+                <button onclick="pressNum('3')" class="py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold text-xl active:scale-95 transition">3</button>
+                <button onclick="pressNum('4')" class="py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold text-xl active:scale-95 transition">4</button>
+                <button onclick="pressNum('5')" class="py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold text-xl active:scale-95 transition">5</button>
+                <button onclick="pressNum('6')" class="py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold text-xl active:scale-95 transition">6</button>
+                <button onclick="pressNum('7')" class="py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold text-xl active:scale-95 transition">7</button>
+                <button onclick="pressNum('8')" class="py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold text-xl active:scale-95 transition">8</button>
+                <button onclick="pressNum('9')" class="py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold text-xl active:scale-95 transition">9</button>
+                <button onclick="clearPin()" class="py-3 bg-rose-950/40 text-rose-400 hover:bg-rose-900/60 rounded-xl font-medium text-sm active:scale-95 transition">Hapus</button>
+                <button onclick="pressNum('0')" class="py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold text-xl active:scale-95 transition">0</button>
+                <button onclick="submitPin()" class="py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium text-sm active:scale-95 transition">OK</button>
+            </div>
+            <p id="pinMsg" class="text-rose-400 text-xs h-4"></p>
+        </div>
+    </div>
+
+    <!-- Header Navbar -->
+    <header class="border-b border-slate-800 bg-slate-950/70 backdrop-blur sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-blue-500/30">
+                    SF
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white">SelfForge</h1>
+                    <p class="text-xs text-slate-400">Personal Growth & Boundary Companion</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span id="networkStatus" class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ONLINE
+                </span>
+                <button onclick="lockApp()" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm border border-slate-700 transition" title="Kunci Aplikasi">
+                    <i class="fas fa-lock"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 pt-6">
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap gap-2 mb-6 border-b border-slate-800 pb-4">
+            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="tab-btn active-tab px-4 py-2.5 rounded-xl font-medium text-sm transition flex items-center gap-2">
+                <i class="fas fa-chart-pie"></i> Dashboard
+            </button>
+            <button onclick="switchTab('boundaries')" id="btn-boundaries" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-2">
+                <i class="fas fa-shield-alt"></i> Batas Diri
+            </button>
+            <button onclick="switchTab('reading')" id="btn-reading" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-2">
+                <i class="fas fa-book-open"></i> Membaca
+            </button>
+            <button onclick="switchTab('sleep')" id="btn-sleep" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-2">
+                <i class="fas fa-moon"></i> Pola Tidur
+            </button>
+            <button onclick="switchTab('comfort')" id="btn-comfort" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-2">
+                <i class="fas fa-compass"></i> Zona Nyaman
+            </button>
+            <button onclick="switchTab('settings')" id="btn-settings" class="tab-btn px-4 py-2.5 rounded-xl font-medium text-sm bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-2 ml-auto">
+                <i class="fas fa-cog"></i> Pengaturan
+            </button>
+        </div>
+
+        <!-- 1. DASHBOARD TAB -->
+        <section id="tab-dashboard">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-slate-800/60 p-5 rounded-2xl border border-slate-700/60">
+                    <div class="text-xs font-semibold text-slate-400 mb-1">KETENANGAN PIKIRAN</div>
+                    <div id="dashPeace" class="text-2xl font-bold text-emerald-400">Tenang & Terkendali</div>
+                    <p class="text-xs text-slate-500 mt-2">Berdasarkan penolakan tegas terakhir</p>
+                </div>
+                <div class="bg-slate-800/60 p-5 rounded-2xl border border-slate-700/60">
+                    <div class="text-xs font-semibold text-slate-400 mb-1">Halaman Dibaca Hari Ini</div>
+                    <div id="dashPages" class="text-2xl font-bold text-blue-400">0 Halaman</div>
+                    <p class="text-xs text-slate-500 mt-2">Target harian: 5 Halaman</p>
+                </div>
+                <div class="bg-slate-800/60 p-5 rounded-2xl border border-slate-700/60">
+                    <div class="text-xs font-semibold text-slate-400 mb-1">Target Bebas Screen</div>
+                    <div id="dashSleepTime" class="text-2xl font-bold text-purple-400">22:00 WIB</div>
+                    <p class="text-xs text-slate-500 mt-2">Cahaya layar dimatikan</p>
+                </div>
+                <div class="bg-slate-800/60 p-5 rounded-2xl border border-slate-700/60">
+                    <div class="text-xs font-semibold text-slate-400 mb-1">Tantangan Keberanian</div>
+                    <div id="dashChallengeStatus" class="text-2xl font-bold text-amber-400">Belum Diambil</div>
+                    <p class="text-xs text-slate-500 mt-2">Melatih percaya diri</p>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-blue-900/40 to-slate-800 border border-blue-800/50 p-6 rounded-2xl mb-6">
+                <div class="flex items-start gap-4">
+                    <div class="p-3 bg-blue-600/20 text-blue-400 rounded-xl text-xl">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-blue-300 mb-1">Prinsip Hari Ini</h3>
+                        <p class="text-slate-200 text-lg italic" id="dailyQuote">"Menolak orang lain demi ketenangan diri sendiri bukan kejahatan, melainkan keharusan."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. BOUNDARIES TAB -->
+        <section id="tab-boundaries" class="hidden-tab space-y-6">
+            <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-lg font-bold mb-4 text-white flex items-center gap-2">
+                    <i class="fas fa-comment-slash text-rose-400"></i> Generator Skrip Penolakan Sopan & Tegas
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Kategori Permintaan</label>
+                        <select id="rejectCategory" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+                            <option value="work">Pinjam Tugas / Minta Kerjakan Tugas</option>
+                            <option value="social">Ajakan Keluar / Nongkrong Saat Sibuk</option>
+                            <option value="item">Pinjam Barang Pribadi / Kendaraan</option>
+                            <option value="money">Pinjam Uang / Utang</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Gaya Penolakan</label>
+                        <select id="rejectTone" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+                            <option value="polite">Sopan tapi Lugas (Default)</option>
+                            <option value="direct">Direct & Tegas (Tanpa Alasan Panjang)</option>
+                            <option value="busy">Fokus Prioritas Diri</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="generateRejectScript()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
+                            <i class="fas fa-wand-magic-sparkles"></i> Buat Skrip Penolakan
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 mt-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs text-slate-400 font-semibold">REKOMENDASI JAWABAN:</span>
+                        <button onclick="copyRejectScript()" class="text-xs text-blue-400 hover:underline flex items-center gap-1">
+                            <i class="fas fa-copy"></i> Salin Teks
+                        </button>
+                    </div>
+                    <p id="scriptOutput" class="text-slate-200 text-sm italic">Klik tombol di atas untuk membuat rekomendasi kalimat penolakan...</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-lg font-bold mb-4 text-white flex items-center gap-2">
+                    <i class="fas fa-journal-whills text-emerald-400"></i> Jurnal Ketenangan Diri
+                </h2>
+                <div class="space-y-4">
+                    <input type="text" id="boundaryTitle" placeholder="Situasi (misal: Menolak memberikan jawaban tugas)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+                    <textarea id="boundaryDesc" placeholder="Bagaimana perasaanmu setelah berani menolak? Apakah pikiranmu menjadi lebih tenang?" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm h-24"></textarea>
+                    <button onclick="addBoundaryLog()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-2.5 rounded-xl transition text-sm">
+                        Simpan Catatan
+                    </button>
+                </div>
+                <div id="boundaryLogs" class="mt-6 space-y-3"></div>
+            </div>
+        </section>
+
+        <!-- 3. READING TAB -->
+        <section id="tab-reading" class="hidden-tab space-y-6">
+            <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-lg font-bold mb-4 text-white flex items-center gap-2">
+                    <i class="fas fa-book-reader text-blue-400"></i> Micro-Reading Tracker
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Judul Buku</label>
+                        <input type="text" id="bookTitle" placeholder="Misal: Atomic Habits" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Jumlah Halaman Dibaca Hari Ini</label>
+                        <input type="number" id="pagesRead" placeholder="Misal: 3" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="logReading()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-xl transition text-sm">
+                            Catat Membaca
+                        </button>
+                    </div>
+                </div>
+                <div id="readingLogs" class="mt-6 space-y-3"></div>
+            </div>
+        </section>
+
+        <!-- 4. SLEEP TAB -->
+        <section id="tab-sleep" class="hidden-tab space-y-6">
+            <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-lg font-bold mb-4 text-white flex items-center gap-2">
+                    <i class="fas fa-bed text-purple-400"></i> Night Routine & Anti-Begadang
+                </h2>
+                <div class="p-4 bg-purple-950/40 border border-purple-800/50 rounded-xl mb-6">
+                    <p class="text-sm text-purple-200">
+                        <i class="fas fa-info-circle mr-1"></i> Mulai matikan HP/Laptop 30-60 menit sebelum tidur untuk menghentikan <em>Revenge Bedtime Procrastination</em>.
+                    </p>
+                </div>
+                <div class="space-y-3">
+                    <label class="flex items-center space-x-3 p-3 bg-slate-900 rounded-xl border border-slate-800 cursor-pointer">
+                        <input type="checkbox" class="w-5 h-5 rounded accent-purple-500">
+                        <span class="text-sm text-slate-200">Matikan Layar (Screen Shutdown) jam 21:30</span>
+                    </label>
+                    <label class="flex items-center space-x-3 p-3 bg-slate-900 rounded-xl border border-slate-800 cursor-pointer">
+                        <input type="checkbox" class="w-5 h-5 rounded accent-purple-500">
+                        <span class="text-sm text-slate-200">Membaca 2-5 halaman buku pengantar tidur</span>
+                    </label>
+                    <label class="flex items-center space-x-3 p-3 bg-slate-900 rounded-xl border border-slate-800 cursor-pointer">
+                        <input type="checkbox" class="w-5 h-5 rounded accent-purple-500">
+                        <span class="text-sm text-slate-200">Siapkan pakaian & jadwal untuk besok pagi</span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. COMFORT ZONE TAB -->
+        <section id="tab-comfort" class="hidden-tab space-y-6">
+            <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-lg font-bold mb-4 text-white flex items-center gap-2">
+                    <i class="fas fa-bolt text-amber-400"></i> Tantangan Keberanian Harian
+                </h2>
+                <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 text-center mb-6">
+                    <p class="text-xs text-amber-400 font-semibold mb-2">TANTANGAN HARI INI:</p>
+                    <h3 id="currentChallengeText" class="text-xl font-bold text-white mb-4">"Menyapa orang baru atau berkata 'tidak' pada 1 ajakan yang tidak penting hari ini."</h3>
+                    <button onclick="getNewChallenge()" class="bg-amber-600 hover:bg-amber-500 text-white font-medium px-4 py-2 rounded-xl text-xs transition">
+                        Acak Tantangan Baru
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. SETTINGS TAB -->
+        <section id="tab-settings" class="hidden-tab space-y-6">
+            <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-lg font-bold mb-4 text-white flex items-center gap-2">
+                    <i class="fas fa-bell text-blue-400"></i> Pengaturan Notifikasi & Pengingat
+                </h2>
+                <button onclick="requestNotificationPermission()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-sm mb-6">
+                    Aktifkan Izin Notifikasi Browser
+                </button>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Pengingat Tidur</label>
+                        <input type="time" id="timeSleep" value="21:30" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Pengingat Membaca</label>
+                        <input type="time" id="timeRead" value="19:30" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Pengingat Tantangan</label>
+                        <input type="time" id="timeChallenge" value="08:00" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-lg font-bold mb-4 text-white flex items-center gap-2">
+                    <i class="fas fa-key text-rose-400"></i> Keamanan & PIN
+                </h2>
+                <button onclick="resetPinPrompt()" class="bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800 px-4 py-2.5 rounded-xl text-sm">
+                    Reset / Ganti PIN Aplikasi
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

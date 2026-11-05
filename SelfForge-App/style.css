@@ -1,0 +1,30 @@
+/* Custom CSS untuk animasi dan styling spesifik */
+
+/* Status Tab */
+.active-tab {
+    background-color: #3b82f6 !important;
+    color: #ffffff !important;
+}
+
+.hidden-tab {
+    display: none !important;
+}
+
+/* Kustomisasi Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+}
